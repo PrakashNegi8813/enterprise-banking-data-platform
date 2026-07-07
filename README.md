@@ -13,3 +13,31 @@ A production-ready Azure Databricks project demonstrating enterprise data engine
 - GitHub
 - Power BI
 - Unity Catalog
+
+---
+
+## Architecture
+
+Landing
+
+↓
+
+Bronze
+
+↓
+
+Silver
+
+↓
+
+Gold
+
+↓
+
+Power BI
+
+---
+
+## Current Sprint
+
+Sprint 0 — Engineering Foundation

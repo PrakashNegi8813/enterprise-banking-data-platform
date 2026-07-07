@@ -1,0 +1,10 @@
+[project]
+name = "enterprise-banking-data-platform"
+version = "1.0.0"
+description = "Enterprise Azure Databricks Banking Platform"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+testpaths = ["tests"]

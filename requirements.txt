@@ -1,0 +1,8 @@
+pyspark
+delta-spark
+pandas
+pyarrow
+openpyxl
+pytest
+pyyaml
+loguru
