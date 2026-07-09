@@ -1,0 +1,5 @@
+table_name,file_type,file_path,target_table,source_system,active
+customers,csv,sample_data/csv/customers.csv,bronze_customers,CRM,Y
+accounts,parquet,sample_data/parquet/accounts.parquet,bronze_accounts,CoreBank,Y
+complaints,csv,sample_data/csv/complaints.csv,bronze_complaints,ServiceNow,Y
+risk,sas,sample_data/sas/risk.sas7bdat,bronze_risk,SAS,Y
