@@ -1,43 +1,25 @@
-# Enterprise Banking Data Platform
+Metadata Driven ETL Framework
 
-A production-ready Azure Databricks project demonstrating enterprise data engineering practices.
-
-## Technology Stack
-
+Technologies
 - Azure Databricks
-- Delta Lake
 - PySpark
-- Python
-- Azure Data Factory
-- Azure DevOps
-- GitHub
-- Power BI
+- Delta Lake
 - Unity Catalog
+- ADLS Gen2
 
----
-
-## Architecture
-
+Architecture
 Landing
-
 ↓
-
 Bronze
-
 ↓
-
 Silver
-
 ↓
-
 Gold
 
-↓
-
-Power BI
-
----
-
-## Current Sprint
-
-Sprint 0 — Engineering Foundation
+Features
+- Metadata Driven
+- Watermark Support
+- Audit Logging
+- Rejected Records
+- Data Validation
+- Incremental Processing

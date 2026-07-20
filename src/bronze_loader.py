@@ -1,65 +1,51 @@
-from framework.metadata_reader import get_metadata
-from framework.common_functions import add_audit_columns
+from framework.source_reader import read_source
+from framework.table_writer import write_table
 from framework.validator import validate_not_empty
 from framework.logger import log_pipeline
-from configs.config import *
+
+from pyspark.sql.functions import (
+    current_timestamp,
+    lit
+)
 
 
-def run_bronze(spark, dataset):
+def load_bronze(spark, dataset, context, metadata):
 
-    try:
+    start_time = context["start_time"]
 
-        metadata = get_metadata(spark, dataset)
+    df = read_source(
+        spark,
+        metadata
+    )
 
-        source_path = (
-            f"abfss://{metadata.source_container}"
-            f"@{STORAGE_ACCOUNT}.dfs.core.windows.net/"
-            f"{metadata.source_path}"
-        )
+    rows_read = df.count()
 
-        df = spark.read.format(metadata.file_format).load(source_path)
+    df = (
+        df
+        .withColumn("ingestion_timestamp", current_timestamp())
+        .withColumn("batch_id", lit(context["batch_id"]))
+        .withColumn("pipeline_name", lit(context["pipeline_name"]))
+    )
 
-        validate_not_empty(df)
+    validate_not_empty(df)
 
-        bronze_df = add_audit_columns(
-            df,
-            PIPELINE_NAME,
-            SOURCE_SYSTEM
-        )
+    write_table(
+        spark,
+        df,
+        metadata
+    )
 
-        target_table = (
-            f"{metadata.target_catalog}."
-            f"{metadata.target_schema}."
-            f"{metadata.target_table}"
-        )
+    rows_written = df.count()
 
-        (
-            bronze_df.write
-            .format("delta")
-            .mode("overwrite")
-            .saveAsTable(target_table)
-        )
-
-        row_count = bronze_df.count()
-
-        log_pipeline(
-            spark,
-            dataset,
-            "Bronze",
-            "SUCCESS",
-            row_count,
-            "Bronze Load Completed"
-        )
-
-    except Exception as e:
-
-        log_pipeline(
-            spark,
-            dataset,
-            "Bronze",
-            "FAILED",
-            0,
-            str(e)
-        )
-
-        raise
+    log_pipeline(
+        spark=spark,
+        dataset=dataset,
+        layer="BRONZE",
+        batch_id=context["batch_id"],
+        status="SUCCESS",
+        rows_read=rows_read,
+        rows_written=rows_written,
+        rows_rejected=0,
+        start_time=start_time,
+        message="Bronze load completed successfully."
+    )

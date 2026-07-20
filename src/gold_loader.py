@@ -1,51 +1,40 @@
-from framework.metadata_reader import get_metadata
-from framework.validator import validate_not_empty
+from framework.source_reader import read_source
+from framework.table_writer import write_table
 from framework.logger import log_pipeline
 
 
-def run_gold(spark, dataset):
+def load_gold(spark, dataset, context, metadata):
 
-    try:
+    start_time = context["start_time"]
 
-        metadata = get_metadata(spark, dataset)
+    df = read_source(
+        spark,
+        metadata
+    )
 
-        silver_table = (
-            f"{metadata.target_catalog}.silver.{metadata.target_table}"
-        )
+    rows_read = df.count()
 
-        gold_table = (
-            f"{metadata.target_catalog}.gold.{metadata.target_table}"
-        )
+    #
+    # Business transformations go here
+    #
 
-        df = spark.table(silver_table)
+    write_table(
+        spark,
+        df,
+        metadata
+    )
 
-        validate_not_empty(df)
+    rows_written = df.count()
 
-        (
-            df.write
-            .format("delta")
-            .mode("overwrite")
-            .saveAsTable(gold_table)
-        )
-
-        log_pipeline(
-            spark,
-            dataset,
-            "Gold",
-            "SUCCESS",
-            df.count(),
-            "Gold Load Completed"
-        )
-
-    except Exception as e:
-
-        log_pipeline(
-            spark,
-            dataset,
-            "Gold",
-            "FAILED",
-            0,
-            str(e)
-        )
-
-        raise
+    log_pipeline(
+        spark=spark,
+        dataset=dataset,
+        layer="GOLD",
+        batch_id=context["batch_id"],
+        status="SUCCESS",
+        rows_read=rows_read,
+        rows_written=rows_written,
+        rows_rejected=0,
+        start_time=start_time,
+        message="Gold load completed successfully."
+    )

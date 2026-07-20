@@ -1,0 +1,25 @@
+bundle:
+  name: enterprise-banking-data-platform
+
+include:
+  - resources/*.yml
+
+targets:
+
+  dev:
+
+    default: true
+
+    workspace:
+
+      host: https://<your-workspace-url>
+
+      root_path: /Workspace/enterprise-banking
+
+  prod:
+
+    workspace:
+
+      host: https://<prod-workspace-url>
+
+      root_path: /Workspace/enterprise-banking

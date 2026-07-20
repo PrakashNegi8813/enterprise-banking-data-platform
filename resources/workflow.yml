@@ -1,0 +1,33 @@
+resources:
+
+  jobs:
+
+    enterprise_banking_pipeline:
+
+      name: Enterprise Banking Pipeline
+
+      tasks:
+
+        - task_key: Branch
+
+          spark_python_task:
+
+            python_file: jobs/run_pipeline.py
+
+            parameters:
+              - branch
+
+        - task_key: Product
+
+          depends_on:
+            - task_key: Branch
+
+          spark_python_task:
+
+            python_file: jobs/run_pipeline.py
+
+            parameters:
+              - product
+
+      queue:
+        enabled: true
