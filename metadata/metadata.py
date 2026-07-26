@@ -1,37 +1,21 @@
-import json
-
-# Metadata configuration
 metadata = [
-    {
-        "SourceName": "branch",
-        "FileName": "branch",
-        "SourceContainer": "landing",
-        "TargetContainer": "bronze",
-        "TargetTable": "branch",
-        "LoadType": "Full",
-        "Notebook": "01_Bronze_Ingestion",
-        "IsActive": True
-    },
-    {
-        "SourceName": "product",
-        "FileName": "product",
-        "SourceContainer": "landing",
-        "TargetContainer": "bronze",
-        "TargetTable": "product",
-        "LoadType": "Full",
-        "Notebook": "01_Bronze_Ingestion",
-        "IsActive": True
-    }
+    ("branch","branch","landing","bronze","branch","Full","01_Bronze_Ingestion",True),
+    ("product","product","landing","bronze","product","Full","01_Bronze_Ingestion",True)
 ]
 
-# ADLS path
-metadata_path = "abfss://metadata@stconsumerbankdev001.dfs.core.windows.net/metadata.json"
+columns = [
+    "SourceName",
+    "FileName",
+    "SourceContainer",
+    "TargetContainer",
+    "TargetTable",
+    "LoadType",
+    "Notebook",
+    "IsActive"
+]
 
-# Write JSON to ADLS
-dbutils.fs.put(
-    metadata_path,
-    json.dumps(metadata, indent=4),
-    overwrite=True
+df = spark.createDataFrame(metadata, columns)
+
+df.coalesce(1).write.mode("overwrite").json(
+    "abfss://metadata@stconsumerbankdev001.dfs.core.windows.net/metadata"
 )
-
-print(f"Metadata file created successfully at:\n{metadata_path}")
