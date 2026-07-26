@@ -27,7 +27,7 @@ class ProductGenerator:
 
     def __init__(self):
 
-        PRODUCT_FOLDER.mkdir(parents=True, exist_ok=True)
+        pass
 
     def generate(self):
 
@@ -123,6 +123,14 @@ class ProductGenerator:
                 "Product_Category": "Investment",
                 "Interest_Rate": 0.00,
                 "Status": "Active"
+            },
+            {
+                "Product_ID": "PROD011",
+                "Product_Code": "MF002",
+                "Product_Name": "Mutual Fund",
+                "Product_Category": "Bond",
+                "Interest_Rate": 0.00,
+                "Status": "Active"
             }
 
         ]
@@ -136,14 +144,13 @@ class ProductGenerator:
 
     def save(self, df):
 
-        csv_path = PRODUCT_FOLDER / "product_master.csv"
-        parquet_path = PRODUCT_FOLDER / "product_master.parquet"
+        spark_df = spark.createDataFrame(df)
 
-        df.to_csv(csv_path, index=False)
-        df.to_parquet(parquet_path, index=False)
+        spark_df.write \
+            .mode("overwrite") \
+            .parquet(PRODUCT_FOLDER)
 
-        logger.info(f"CSV Saved      : {csv_path}")
-        logger.info(f"Parquet Saved  : {parquet_path}")
+        logger.info(f"Parquet Saved : {PRODUCT_FOLDER}")
 
     def run(self):
 
@@ -164,4 +171,4 @@ class ProductGenerator:
 
 if __name__ == "__main__":
 
-    ProductGenerator().run()
+    ProductGenerator().run()    

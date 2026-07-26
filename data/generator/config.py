@@ -45,7 +45,9 @@ LOAN_ACCOUNT_FOLDER = LANDING_FOLDER / "loan_account"
 
 TRANSACTION_FOLDER = LANDING_FOLDER / "transaction"
 
-PRODUCT_FOLDER = LANDING_FOLDER / "product"
+#PRODUCT_FOLDER = LANDING_FOLDER / "product"
+
+PRODUCT_FOLDER = "abfss://landing@stconsumerbankdev001.dfs.core.windows.net/product/"
 
 BRANCH_FOLDER = LANDING_FOLDER / "branch"
 
